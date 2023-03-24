@@ -19,6 +19,6 @@ provider "helm" {
 
 provider "google" {
   project = var.google_project_id
-  region  = "eu-central1"
-  zone    = "eu-central1-c"
+  region  = "europe-west9"
+  zone    = "europe-west9-a"
 }
