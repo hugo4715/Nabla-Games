@@ -13,6 +13,9 @@ terraform {
 
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/config"
+    cluster_ca_certificate = module.infra.cluster_cert_authority
+    client_certificate = module.infra.cluster_cert_client
+    client_key = module.infra.cluster_cert_client_key
+    host = module.infra.cluster_endpoint
   }
 }

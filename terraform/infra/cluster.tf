@@ -79,3 +79,15 @@ output "cluster_location" {
   value = google_container_cluster.default.location
 }
 
+output "cluster_cert_authority" {
+  value = google_container_cluster.default.master_auth.0.cluster_ca_certificate
+}
+
+output "cluster_cert_client" {
+  value = google_container_cluster.default.master_auth.0.client_certificate
+}
+
+output "cluster_cert_client_key" {
+  value = google_container_cluster.default.master_auth.0.client_key
+}
+
