@@ -18,7 +18,7 @@ provider "helm" {
 }
 
 provider "google" {
-  project = variable.google_project_id
+  project = var.google_project_id
   region  = "eu-central1"
   zone    = "eu-central1-c"
 }
