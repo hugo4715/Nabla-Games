@@ -16,9 +16,3 @@ provider "helm" {
     config_path = "~/.kube/config"
   }
 }
-
-provider "google" {
-  project = var.google_project_id
-  region  = "europe-west9"
-  zone    = "europe-west9-a"
-}

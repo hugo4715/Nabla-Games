@@ -1,11 +1,13 @@
 ariable "region" {
   type        = string
   description = "Region for the resources."
+  default = "us-west1"
 }
 
 variable "location" {
   type        = string
   description = "Zone for the resources."
+  default = "us-west1-b"
 }
 
 variable "network_name" {
