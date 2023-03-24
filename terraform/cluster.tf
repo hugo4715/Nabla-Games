@@ -1,4 +1,4 @@
-ariable "region" {
+variable "region" {
   type        = string
   description = "Region for the resources."
   default = "us-west1"
