@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nablagames.fullname" . }}-proxy
+  labels:
+    app: proxy
+  {{- include "nablagames.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.proxy.type }}
+  selector:
+    app: proxy
+  {{- include "nablagames.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.proxy.ports | toYaml | nindent 2 -}}

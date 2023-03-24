@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nablagames.fullname" . }}-jump
+  labels:
+    app: jump
+  {{- include "nablagames.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.jump.replicas }}
+  selector:
+    matchLabels:
+      app: jump
+    {{- include "nablagames.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: jump
+      {{- include "nablagames.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.jump.jump.image.repository }}:{{ .Values.jump.jump.image.tag
+          | default .Chart.AppVersion }}
+        name: jump
+        ports:
+        - containerPort: 25565
+        resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nablagames.fullname" . }}-lobby
+  labels:
+    app: lobby
+  {{- include "nablagames.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.lobby.replicas }}
+  selector:
+    matchLabels:
+      app: lobby
+    {{- include "nablagames.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: lobby
+      {{- include "nablagames.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.lobby.lobby.image.repository }}:{{ .Values.lobby.lobby.image.tag
+          | default .Chart.AppVersion }}
+        name: lobby
+        ports:
+        - containerPort: 25565
+        resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nablagames.fullname" . }}-proxy
+  labels:
+    app: proxy
+  {{- include "nablagames.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.proxy.replicas }}
+  selector:
+    matchLabels:
+      app: proxy
+    {{- include "nablagames.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: proxy
+      {{- include "nablagames.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        - name: PROXY_SLOTS
+          value: {{ quote .Values.proxy.slots }}
+        - name: JUMP_HOST
+          value: {{ include "nablagames.fullname" . }}-jump
+        - name: JUMP_PORT
+          value: "25565"
+        - name: PUNCH_HOST
+          value: {{ include "nablagames.fullname" . }}-punch
+        - name: PUNCH_PORT
+          value: "25565"
+        - name: LOBBY_HOST
+          value: {{ include "nablagames.fullname" . }}-lobby
+        - name: LOBBY_PORT
+          value: "25565"
+        image: {{ .Values.proxy.proxy.image.repository }}:{{ .Values.proxy.proxy.image.tag
+          | default .Chart.AppVersion }}
+        name: proxy
+        ports:
+        - containerPort: 25577
+        resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nablagames.fullname" . }}-punch
+  labels:
+    app: punch
+  {{- include "nablagames.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.punch.replicas }}
+  selector:
+    matchLabels:
+      app: punch
+    {{- include "nablagames.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: punch
+      {{- include "nablagames.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.punch.punch.image.repository }}:{{ .Values.punch.punch.image.tag
+          | default .Chart.AppVersion }}
+        name: punch
+        ports:
+        - containerPort: 25565
+        resources: {}
