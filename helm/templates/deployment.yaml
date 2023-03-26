@@ -19,10 +19,19 @@ spec:
     spec:
       containers:
       - env:
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
-        image: {{ .Values.jump.jump.image.repository }}:{{ .Values.jump.jump.image.tag
-          | default .Chart.AppVersion }}
+        - name: SURREAL_HOST
+          value: {{ include "nablagames.fullname" . }}-surreal
+        - name: SURREAL_PORT
+          value: "8000"
+        - name: SURREAL_USER
+          value: {{ .Values.database.auth.user }}
+        - name: SURREAL_PASSWORD
+          value: {{ .Values.database.auth.password }}
+        - name: SURREAL_DATABASE
+          value: {{ .Values.database.auth.database }}
+        - name: SURREAL_NAMESPACE
+          value: {{ .Values.database.auth.namespace }}
+        image: {{ .Values.jump.jump.image.repository }}:{{ .Values.jump.jump.image.tag | default .Chart.AppVersion }}
         name: jump
         ports:
         - containerPort: 25565
@@ -49,8 +58,6 @@ spec:
     spec:
       containers:
       - env:
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.lobby.lobby.image.repository }}:{{ .Values.lobby.lobby.image.tag
           | default .Chart.AppVersion }}
         name: lobby
@@ -123,11 +130,40 @@ spec:
     spec:
       containers:
       - env:
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.punch.punch.image.repository }}:{{ .Values.punch.punch.image.tag
           | default .Chart.AppVersion }}
         name: punch
         ports:
         - containerPort: 25565
         resources: {}
+---
+{{ if .Values.database.enabled }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nablagames.fullname" . }}-surreal
+  labels:
+    app: surreal
+  {{- include "nablagames.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: surreal
+    {{- include "nablagames.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: surreal
+      {{- include "nablagames.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        image: {{ .Values.database.surreal.image.repository }}:{{ .Values.database.surreal.image.tag | default .Chart.AppVersion }}
+        name: surreal
+        ports:
+        - containerPort: 8000
+        args: ["start", "--user", {{ .Values.database.auth.user | quote }}, "--pass", {{ .Values.database.auth.password | quote }}, "memory"]
+
+{{ end }}

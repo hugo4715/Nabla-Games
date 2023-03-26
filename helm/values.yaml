@@ -41,3 +41,14 @@ punch:
       tag: latest
   replicas: 1
   type: ClusterIP
+database:
+  enabled: true
+  auth:
+    user: root
+    password: root
+    database: jump
+    namespace: jump
+  surreal:
+    image:
+      repository: surrealdb/surrealdb
+      tag: latest
