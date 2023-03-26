@@ -192,6 +192,6 @@ spec:
         - containerPort: 8080
         env:
         - name: VUE_APP_SURREAL_HOST
-          value: http://localhost:30002
+          value: http://localhost:30001
 
 {{ end }}
