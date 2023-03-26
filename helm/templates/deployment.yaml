@@ -165,5 +165,33 @@ spec:
         ports:
         - containerPort: 8000
         args: ["start", "--user", {{ .Values.database.auth.user | quote }}, "--pass", {{ .Values.database.auth.password | quote }}, "memory"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nablagames.fullname" . }}-leaderboard
+  labels:
+    app: leaderboard
+  {{- include "nablagames.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leaderboard
+    {{- include "nablagames.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: leaderboard
+      {{- include "nablagames.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: leaderboard
+        image: {{ .Values.leaderboard.leaderboard.image.repository }}:{{ .Values.leaderboard.leaderboard.image.tag | default .Chart.AppVersion }}
+        ports:
+        - containerPort: 8080
+        env:
+        - name: VUE_APP_SURREAL_HOST
+          value: http://localhost:30002
 
 {{ end }}
